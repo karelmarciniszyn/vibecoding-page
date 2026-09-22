@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLVC — Claude AI: Vibe Coding bez programování</title>
+<meta name="description" content="Dvoudenní školení Claude AI – Vibe Coding a tvorba aplikací bez programování. Naučte se stavět weby, aplikace a automatizace pomocí AI, bez znalosti kódu.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #120e0f;
+    --bg-soft: #1a1416;
+    --card: #201a1c;
+    --card-border: rgba(255,255,255,0.08);
+    --text: #f5efe9;
+    --text-dim: #b8aaa4;
+    --coral: #ff6b5b;
+    --amber: #ffb454;
+    --magenta: #c4479c;
+    --violet: #8b5cf6;
+    --grad: linear-gradient(115deg, var(--coral), var(--amber) 45%, var(--magenta) 75%, var(--violet));
+    --grad-soft: linear-gradient(135deg, rgba(255,107,91,0.18), rgba(139,92,246,0.18));
+    --radius: 20px;
+    --maxw: 1160px;
+    --shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 .5em;
+  }
+  a{ color: inherit; }
+  .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .grad-text{
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  section{ position: relative; padding: 100px 0; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size: 13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color: var(--amber); margin-bottom: 16px;
+  }
+  .eyebrow::before{ content:"✦"; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding: 15px 28px; border-radius: 999px; font-weight:600; font-size:15.5px;
+    text-decoration:none; cursor:pointer; border:none; transition: transform .25s ease, box-shadow .25s ease;
+    font-family:inherit;
+  }
+  .btn-primary{
+    background: var(--grad); color:#160f10;
+    box-shadow: 0 10px 30px -8px rgba(255,107,91,0.5);
+  }
+  .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 36px -8px rgba(255,107,91,0.65); }
+  .btn-ghost{
+    background: rgba(255,255,255,0.06); color: var(--text);
+    border: 1px solid var(--card-border);
+  }
+  .btn-ghost:hover{ background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+  /* NAV */
+  header{
+    position: fixed; top:0; left:0; right:0; z-index: 100;
+    backdrop-filter: blur(14px) saturate(140%);
+    background: rgba(18,14,15,0.6);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  nav{
+    max-width: var(--maxw); margin:0 auto; padding: 16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px; display:flex; align-items:center; gap:8px; }
+  .logo .dot{ width:10px; height:10px; border-radius:50%; background: var(--grad); display:inline-block; }
+  .nav-links{ display:flex; gap:32px; list-style:none; margin:0; padding:0; }
+  .nav-links a{ text-decoration:none; color: var(--text-dim); font-size:14.5px; font-weight:500; transition: color .2s; }
+  .nav-links a:hover{ color: var(--text); }
+  .nav-cta{ display:flex; align-items:center; gap:16px; }
+  .burger{ display:none; background:none; border:none; color:var(--text); font-size:24px; cursor:pointer; }
+
+  @media (max-width: 860px){
+    .nav-links{
+      position:absolute; top:100%; left:0; right:0; flex-direction:column; gap:0;
+      background: rgba(18,14,15,0.97); border-bottom:1px solid rgba(255,255,255,0.08);
+      max-height:0; overflow:hidden; transition: max-height .3s ease;
+    }
+    .nav-links.open{ max-height:400px; }
+    .nav-links li{ padding: 14px 24px; border-top:1px solid rgba(255,255,255,0.05); }
+    .nav-cta .btn-ghost{ display:none; }
+    .burger{ display:block; }
+  }
+
+  /* HERO */
+  .hero{
+    padding-top: 170px; padding-bottom: 90px;
+    display:grid; place-items:center; text-align:center;
+    min-height: 92vh;
+  }
+  .hero-bg{
+    position:absolute; inset:0; z-index:-1; overflow:hidden;
+  }
+  .blob{
+    position:absolute; border-radius:50%; filter: blur(90px); opacity:.55;
+    animation: float 16s ease-in-out infinite;
+  }
+  .blob1{ width:520px; height:520px; background: var(--coral); top:-160px; left:-120px; }
+  .blob2{ width:460px; height:460px; background: var(--violet); bottom:-160px; right:-100px; animation-delay: -6s; }
+  .blob3{ width:360px; height:360px; background: var(--amber); top:30%; right:15%; opacity:.35; animation-delay: -10s; }
+  @keyframes float{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(30px,-40px) scale(1.08); }
+  }
+  .noise{
+    position:absolute; inset:0; opacity:.05; mix-blend-mode:overlay; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero h1{ font-size: clamp(2.4rem, 6vw, 4.6rem); max-width: 900px; }
+  .hero p.lead{ font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--text-dim); max-width: 640px; margin: 0 auto 36px; }
+  .hero-ctas{ display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+  .hero-note{ margin-top:22px; font-size:13.5px; color:var(--text-dim); }
+
+  /* reveal animation */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* STATS */
+  .stats{ padding: 60px 0; border-top:1px solid var(--card-border); border-bottom:1px solid var(--card-border); }
+  .stats .wrap{ display:grid; grid-template-columns: repeat(4,1fr); gap:24px; text-align:center; }
+  .stat-num{ font-family:'Space Grotesk',sans-serif; font-size: clamp(1.8rem,4vw,2.6rem); font-weight:700; }
+  .stat-label{ color: var(--text-dim); font-size:14px; margin-top:6px; }
+  @media (max-width:760px){ .stats .wrap{ grid-template-columns: repeat(2,1fr); } }
+
+  /* SECTION HEADS */
+  .section-head{ max-width: 640px; margin-bottom: 56px; }
+  .section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+  .section-head p{ color: var(--text-dim); font-size: 17px; }
+
+  /* ABOUT */
+  .about-grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items:center; }
+  .about-grid p{ color: var(--text-dim); font-size:17px; }
+  .about-card{
+    background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius);
+    padding: 32px; box-shadow: var(--shadow);
+  }
+  .about-card ul{ list-style:none; margin:0; padding:0; display:grid; gap:16px; }
+  .about-card li{ display:flex; gap:12px; align-items:flex-start; font-size:15px; color:var(--text-dim); }
+  .check{ flex:none; width:22px; height:22px; border-radius:50%; background: var(--grad-soft); border:1px solid rgba(255,180,84,.4); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--amber); }
+  @media (max-width:860px){ .about-grid{ grid-template-columns:1fr; } }
+
+  /* AUDIENCE */
+  .audience-grid{ display:grid; grid-template-columns: repeat(5,1fr); gap:16px; }
+  .audience-card{
+    background: var(--card); border:1px solid var(--card-border); border-radius:16px; padding:22px 16px;
+    text-align:center; transition: transform .25s ease, border-color .25s ease;
+  }
+  .audience-card:hover{ transform: translateY(-4px); border-color: rgba(255,180,84,.4); }
+  .audience-card .ic{ font-size:26px; margin-bottom:10px; }
+  .audience-card span{ font-size:14px; color: var(--text-dim); }
+  @media (max-width:920px){ .audience-grid{ grid-template-columns: repeat(2,1fr);} }
+
+  /* MODULES bento */
+  .bento{ display:grid; grid-template-columns: repeat(4, 1fr); gap:18px; }
+  .bento-card{
+    grid-column: span 2;
+    background: linear-gradient(160deg, var(--card), var(--bg-soft));
+    border:1px solid var(--card-border); border-radius: var(--radius);
+    padding: 26px; transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  }
+  .bento-card:hover{ transform: translateY(-6px); box-shadow: var(--shadow); border-color: rgba(196,71,156,.45); }
+  .bento-card .num{ font-family:'Space Grotesk',sans-serif; font-size:13px; color: var(--amber); font-weight:700; letter-spacing:.06em; }
+  .bento-card h3{ font-size: 19px; margin: 10px 0 6px; }
+  .bento-card p{ color: var(--text-dim); font-size: 14.5px; margin:0; }
+  .bento-card.wide{ grid-column: span 4; }
+  @media (max-width: 920px){
+    .bento{ grid-template-columns: 1fr 1fr; }
+    .bento-card{ grid-column: span 2 !important; }
+  }
+  @media (max-width: 620px){
+    .bento{ grid-template-columns: 1fr; }
+    .bento-card{ grid-column: span 1 !important; }
+  }
+
+  /* OUTCOMES */
+  .outcomes{ display:grid; grid-template-columns: repeat(3,1fr); gap:20px; }
+  .outcome-card{
+    border-radius: var(--radius); padding:28px; background: var(--grad-soft);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .outcome-card .ic{ font-size:28px; }
+  .outcome-card h3{ font-size:18px; margin: 14px 0 8px; }
+  .outcome-card p{ color: var(--text-dim); font-size:14.5px; margin:0; }
+  @media (max-width:860px){ .outcomes{ grid-template-columns:1fr; } }
+
+  /* COUNTDOWN */
+  .countdown-band{
+    border-radius: 28px; padding: 48px; text-align:center;
+    background: radial-gradient(circle at 30% 20%, rgba(255,107,91,.25), transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(139,92,246,.3), transparent 60%),
+                var(--bg-soft);
+    border: 1px solid var(--card-border);
+  }
+  .countdown-band .eyebrow{ justify-content:center; }
+  .countdown{ display:flex; gap:18px; justify-content:center; margin: 28px 0 8px; flex-wrap:wrap; }
+  .countdown div{ min-width:88px; }
+  .countdown .n{ font-family:'Space Grotesk',sans-serif; font-size: clamp(2rem,5vw,3rem); font-weight:700; }
+  .countdown .l{ font-size:12.5px; color: var(--text-dim); text-transform:uppercase; letter-spacing:.08em; }
+
+  /* PRICING */
+  .pricing{ display:grid; grid-template-columns: repeat(3,1fr); gap:22px; }
+  .price-card{
+    background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius);
+    padding: 30px; position:relative; transition: transform .25s ease;
+  }
+  .price-card:hover{ transform: translateY(-6px); }
+  .price-card.featured{ border-color: transparent; background: linear-gradient(var(--card), var(--card)) padding-box, var(--grad) border-box; border-width:2px; border-style:solid; }
+  .badge{
+    position:absolute; top:-13px; left:24px; background: var(--grad); color:#160f10;
+    font-size:12px; font-weight:700; padding:5px 14px; border-radius:999px;
+  }
+  .price-card h3{ font-size:20px; margin-bottom:4px; }
+  .price-card .date{ color: var(--text-dim); font-size:14.5px; margin-bottom:18px; }
+  .price-card .price{ font-family:'Space Grotesk',sans-serif; font-size: 2rem; font-weight:700; }
+  .price-card .price small{ font-size:14px; font-weight:500; color:var(--text-dim); }
+  .price-card ul{ list-style:none; padding:0; margin: 20px 0 24px; display:grid; gap:10px; }
+  .price-card li{ font-size:14px; color: var(--text-dim); display:flex; gap:8px; }
+  @media (max-width:920px){ .pricing{ grid-template-columns:1fr; } }
+
+  /* FORMAT / LOCATION */
+  .locations{ display:grid; grid-template-columns: 1fr 1fr; gap:22px; }
+  .loc-card{ background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius); padding:28px; }
+  .loc-card h3{ font-size:19px; margin-bottom:8px; }
+  .loc-card p{ color: var(--text-dim); font-size:14.5px; margin:4px 0; }
+  @media (max-width:760px){ .locations{ grid-template-columns:1fr; } }
+
+  /* FAQ */
+  .faq-item{ border-bottom: 1px solid var(--card-border); }
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none; color: var(--text);
+    font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600;
+    padding: 22px 0; display:flex; justify-content:space-between; align-items:center; cursor:pointer;
+  }
+  .faq-q .plus{ font-size:22px; color: var(--amber); transition: transform .3s ease; flex:none; margin-left:16px; }
+  .faq-item.open .faq-q .plus{ transform: rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition: max-height .35s ease; }
+  .faq-a p{ color: var(--text-dim); font-size:15px; padding-bottom:22px; margin:0; max-width:700px; }
+
+  /* CONTACT */
+  .contact-card{
+    border-radius: 28px; padding: 56px; text-align:center;
+    background: linear-gradient(135deg, rgba(255,107,91,.15), rgba(139,92,246,.2)), var(--bg-soft);
+    border:1px solid var(--card-border);
+  }
+  .contact-links{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:28px; }
+
+  footer{ padding: 40px 0; border-top:1px solid var(--card-border); text-align:center; color: var(--text-dim); font-size:13.5px; }
+  footer a{ color: var(--text); text-decoration:none; }
+
+  .floating-cta{
+    position:fixed; bottom:24px; right:24px; z-index:90;
+    opacity:0; transform: translateY(20px) scale(.9); pointer-events:none;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .floating-cta.show{ opacity:1; transform:none; pointer-events:auto; }
+
+  @media (max-width:620px){
+    section{ padding: 70px 0; }
+    .contact-card{ padding: 34px 22px; }
+    .floating-cta{ right:16px; bottom:16px; }
+    .floating-cta .btn{ padding:13px 20px; font-size:14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo"><span class="dot"></span>CLVC</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#kurz">O kurzu</a></li>
+      <li><a href="#obsah">Obsah</a></li>
+      <li><a href="#terminy">Termíny</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#terminy" class="btn btn-ghost">Termíny a ceny</a>
+      <a href="#kontakt" class="btn btn-primary">Přihlásit se</a>
+      <button class="burger" id="burger" aria-label="Menu">☰</button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-bg">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="noise"></div>
+  </div>
+  <div class="wrap">
+    <div class="eyebrow">Školení CLVC · Praha &amp; Brno · 2026</div>
+    <h1>Postavte si vlastní <span class="grad-text">web i aplikaci</span> s Claude AI — bez jediného řádku kódu</h1>
+    <p class="lead">Dvoudenní intenzivní kurz "vibe codingu": popíšete slovy, co chcete vytvořit, a Claude to za vás naprogramuje. Pro analytiky, marketéry, projekťáky i každého, kdo chce tvořit, ne jen mluvit o AI.</p>
+    <div class="hero-ctas">
+      <a href="#kontakt" class="btn btn-primary">Rezervovat místo</a>
+      <a href="#obsah" class="btn btn-ghost">Co se naučím?</a>
+    </div>
+    <p class="hero-note">Nejbližší termín: 26.–27. 10. 2026, Praha · žádné programátorské znalosti nejsou potřeba</p>
+  </div>
+</section>
+
+<section class="stats reveal">
+  <div class="wrap">
+    <div><div class="stat-num grad-text">2</div><div class="stat-label">dny naplno (9–17 h)</div></div>
+    <div><div class="stat-num grad-text">8</div><div class="stat-label">praktických modulů</div></div>
+    <div><div class="stat-num grad-text">3</div><div class="stat-label">termíny na výběr</div></div>
+    <div><div class="stat-num grad-text">0</div><div class="stat-label">potřebných znalostí kódu</div></div>
+  </div>
+</section>
+
+<section id="kurz">
+  <div class="wrap about-grid">
+    <div class="reveal">
+      <div class="eyebrow">O kurzu</div>
+      <h2>Vibe coding: řeknete si, co chcete — Claude to postaví</h2>
+      <p>Školení se zaměřuje na Claude od Anthropic jako AI asistenta pro tvorbu nástrojů a automatizaci. Naučíte se koncept "vibe coding" — přístup, kdy verbálně popíšete požadavky a AI je implementuje. Žádné předchozí programátorské znalosti nejsou potřeba, stačí základní práce s počítačem a internetem.</p>
+    </div>
+    <div class="about-card reveal">
+      <ul>
+        <li><span class="check">✓</span>Jak Claude funguje, kde jsou jeho limity a jak poznat halucinace</li>
+        <li><span class="check">✓</span>Efektivní promptování a iterace k požadovanému výsledku</li>
+        <li><span class="check">✓</span>Personalizace Claude — Memory, Projects, Skills</li>
+        <li><span class="check">✓</span>Certifikát po absolvování, možnost výuky v angličtině</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Pro koho je kurz</div>
+      <h2>Nemusíte umět programovat</h2>
+      <p>Kurz je stavěný pro lidi, kteří chtějí tvořit nástroje a automatizace, ne psát kód.</p>
+    </div>
+    <div class="audience-grid reveal">
+      <div class="audience-card"><div class="ic">📊</div><span>Analytici a datoví pracovníci</span></div>
+      <div class="audience-card"><div class="ic">📣</div><span>Marketingoví pracovníci</span></div>
+      <div class="audience-card"><div class="ic">🗂️</div><span>Projektoví manažeři</span></div>
+      <div class="audience-card"><div class="ic">🧑‍💼</div><span>HR a administrativa</span></div>
+      <div class="audience-card"><div class="ic">💡</div><span>Kdokoli bez zkušeností s programováním</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="obsah">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Obsah kurzu</div>
+      <h2>8 modulů od základů po sub-agenty</h2>
+      <p>Postupně projdete od úplných základů AI až po pokročilé workflow s automatizací a delegováním úkolů.</p>
+    </div>
+    <div class="bento reveal">
+      <div class="bento-card"><div class="num">01</div><h3>Úvod do AI a Claude</h3><p>Jak modely fungují, kde jsou limity a jak rozpoznat halucinace.</p></div>
+      <div class="bento-card"><div class="num">02</div><h3>Efektivní promptování</h3><p>Anatomie dobrého promptu a technika postupné iterace.</p></div>
+      <div class="bento-card"><div class="num">03</div><h3>Personalizace Claude</h3><p>Memory, Projects a Skills — jak si AI přizpůsobit svým potřebám.</p></div>
+      <div class="bento-card"><div class="num">04</div><h3>Rozhraní a workflow</h3><p>Efektivní práce v rozhraní Claude pro každodenní úkoly.</p></div>
+      <div class="bento-card"><div class="num">05</div><h3>GitHub a verzování</h3><p>Základy práce s Gitem a GitHubem pro vaše projekty.</p></div>
+      <div class="bento-card"><div class="num">06</div><h3>Vlastní web a GitHub Pages</h3><p>Vytvoříte a publikujete vlastní webovou stránku on-line.</p></div>
+      <div class="bento-card"><div class="num">07</div><h3>Interaktivní aplikace</h3><p>Kalkulačka, formulář nebo kvíz s ukládáním dat.</p></div>
+      <div class="bento-card wide"><div class="num">08</div><h3>Sub-agenti a delegování úkolů</h3><p>Jak AI rozdělí složitý úkol na dílčí kroky a deleguje je specializovaným agentům — základ pro reálnou automatizaci vaší práce.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Co si odnesete</div>
+      <h2>Tři hotové výstupy z vlastní práce</h2>
+    </div>
+    <div class="outcomes reveal">
+      <div class="outcome-card"><div class="ic">🌐</div><h3>Vlastní web</h3><p>Webová stránka, kterou si sami naprogramujete a publikujete na internet.</p></div>
+      <div class="outcome-card"><div class="ic">🧩</div><h3>Interaktivní aplikace</h3><p>Kalkulačka, formulář nebo kvíz podle vašeho zadání.</p></div>
+      <div class="outcome-card"><div class="ic">⚙️</div><h3>Automatizační skript</h3><p>Nástroj, který vám ušetří opakovanou ruční práci.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="countdown-band reveal">
+      <div class="eyebrow">Nejbližší termín — Praha</div>
+      <h2>Do startu kurzu zbývá</h2>
+      <div class="countdown" id="countdown">
+        <div><div class="n" id="cd-days">–</div><div class="l">dní</div></div>
+        <div><div class="n" id="cd-hours">–</div><div class="l">hodin</div></div>
+        <div><div class="n" id="cd-min">–</div><div class="l">minut</div></div>
+        <div><div class="n" id="cd-sec">–</div><div class="l">sekund</div></div>
+      </div>
+      <a href="#kontakt" class="btn btn-primary" style="margin-top:12px;">Chci si rezervovat místo</a>
+    </div>
+  </div>
+</section>
+
+<section id="terminy">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Termíny a ceny</div>
+      <h2>Vyberte si termín, který vám sedí</h2>
+      <p>Cena 9 800 Kč bez DPH (11 858 Kč s DPH 21 %) na obou lokalitách. Účast možná prezenčně i online.</p>
+    </div>
+    <div class="pricing reveal">
+      <div class="price-card featured">
+        <span class="badge">Nejbližší termín</span>
+        <h3>Praha</h3>
+        <div class="date">26.–27. 10. 2026</div>
+        <div class="price">9 800 Kč <small>bez DPH</small></div>
+        <ul>
+          <li>📍 Líbalova 1, Praha 11 – Chodov</li>
+          <li>🕘 9:00–17:00, 2 dny</li>
+          <li>💻 Prezenčně nebo online</li>
+        </ul>
+        <a href="#kontakt" class="btn btn-primary" style="width:100%;">Přihlásit se</a>
+      </div>
+      <div class="price-card">
+        <h3>Brno</h3>
+        <div class="date">23.–24. 11. 2026</div>
+        <div class="price">9 800 Kč <small>bez DPH</small></div>
+        <ul>
+          <li>📍 Sochorova 38, budova COMGUARD</li>
+          <li>🕘 9:00–17:00, 2 dny</li>
+          <li>💻 Prezenčně nebo online</li>
+        </ul>
+        <a href="#kontakt" class="btn btn-ghost" style="width:100%;">Přihlásit se</a>
+      </div>
+      <div class="price-card">
+        <h3>Praha</h3>
+        <div class="date">7.–8. 12. 2026</div>
+        <div class="price">9 800 Kč <small>bez DPH</small></div>
+        <ul>
+          <li>📍 Líbalova 1, Praha 11 – Chodov</li>
+          <li>🕘 9:00–17:00, 2 dny</li>
+          <li>💻 Prezenčně nebo online</li>
+        </ul>
+        <a href="#kontakt" class="btn btn-ghost" style="width:100%;">Přihlásit se</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Formát a lokace</div>
+      <h2>Hybridně — jak vám to vyhovuje</h2>
+      <p>Zúčastnit se můžete osobně v učebně, nebo pohodlně online. Obsah i lektor jsou totožní.</p>
+    </div>
+    <div class="locations reveal">
+      <div class="loc-card"><h3>📍 Praha</h3><p>Líbalova 1, Praha 11 – Chodov</p><p>Budova Opatov Park</p></div>
+      <div class="loc-card"><h3>📍 Brno</h3><p>Sochorova 38</p><p>Budova COMGUARD</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap" style="max-width:800px;">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Časté dotazy</div>
+      <h2>Co byste měli vědět</h2>
+    </div>
+    <div class="reveal" id="faqList">
+      <div class="faq-item open">
+        <button class="faq-q">Potřebuji znát programování? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Ne. Kurz je navržený tak, aby ho zvládl kdokoli se základní znalostí práce s počítačem a internetem — žádné předchozí programátorské zkušenosti nejsou potřeba.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Musím být osobně na místě? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Ne, formát je hybridní. Zúčastnit se můžete prezenčně v Praze nebo Brně, nebo pohodlně online — vyberete si při registraci.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Dostanu po kurzu certifikát? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Ano, po absolvování obdržíte certifikát o účasti. Kurz nabízíme i v angličtině a jako privátní školení s obsahem na míru.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Co dál po CLVC? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Navazuje kurz "Claude Code – autonomní agentní vývoj &amp; MCP integrace (CLPRG1)" pro ty, kteří chtějí jít ještě hlouběji.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="kontakt">
+  <div class="wrap">
+    <div class="contact-card reveal">
+      <div class="eyebrow" style="justify-content:center;">Přihlaste se ještě dnes</div>
+      <h2>Připraveni začít tvořit s Claude AI?</h2>
+      <p style="color:var(--text-dim); max-width:520px; margin:0 auto;">Objednávku vyřídíte přes online formulář na webu školení, telefonicky, nebo e-mailem — rádi vám poradíme i s výběrem termínu či privátním školením na míru.</p>
+      <div class="contact-links">
+        <a href="tel:+420517546191" class="btn btn-primary">📞 +420 517 546 191</a>
+        <a href="mailto:skoleni@ictpro.cz" class="btn btn-ghost">✉️ skoleni@ictpro.cz</a>
+        <a href="https://www.skoleni-ict.cz/kurz/Claude-AI-vibe-coding-a-tvorba-aplikaci-bez-programovani-CLVC.aspx" target="_blank" rel="noopener" class="btn btn-ghost">🌐 www.skoleni-ict.cz</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Kurz CLVC pořádá ICT Pro s.r.o. · <a href="https://www.skoleni-ict.cz" target="_blank" rel="noopener">www.skoleni-ict.cz</a> · &copy; 2026
+  </div>
+</footer>
+
+<div class="floating-cta" id="floatCta">
+  <a href="#kontakt" class="btn btn-primary">Přihlásit se →</a>
+</div>
+
+<script>
+  // mobile nav
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // floating CTA visibility
+  const floatCta = document.getElementById('floatCta');
+  const hero = document.querySelector('.hero');
+  const heroObserver = new IntersectionObserver(([entry]) => {
+    floatCta.classList.toggle('show', !entry.isIntersecting);
+  }, { threshold: 0 });
+  heroObserver.observe(hero);
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    if (item.classList.contains('open')) a.style.maxHeight = a.scrollHeight + 'px';
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => { i.classList.remove('open'); i.querySelector('.faq-a').style.maxHeight = null; });
+      if (!isOpen) { item.classList.add('open'); a.style.maxHeight = a.scrollHeight + 'px'; }
+    });
+  });
+
+  // countdown to nearest date: 2026-10-26 09:00
+  const target = new Date('2026-10-26T09:00:00');
+  function updateCountdown(){
+    const now = new Date();
+    let diff = target - now;
+    if (diff < 0) diff = 0;
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-days').textContent = d;
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-min').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-sec').textContent = String(s).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
